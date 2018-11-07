@@ -4,7 +4,7 @@
     <main>
       <div class="left-side">
         <span class="title">
-          Welcome to your new project!
+          Electron teste app auto update
         </span>
         <system-information></system-information>
       </div>
