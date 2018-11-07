@@ -1,30 +1,16 @@
 'use strict'
 
-import { app, BrowserWindow, autoUpdater, dialog } from 'electron'
+import { app, BrowserWindow, autoUpdater } from 'electron'
 
 if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
-const server = `https://codeload.github.com/herissonsilvahs/electron-app-teste/zip/${app.getVersion()}`
+const server = `https://github.com/herissonsilvahs/electron-app-teste/releases/tag/${app.getVersion()}`
 
 autoUpdater.setFeedURL(server)
 
 autoUpdater.checkForUpdates()
-
-autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
-  const dialogOpts = {
-    type: 'info',
-    buttons: ['Restart', 'Later'],
-    title: 'Application Update',
-    message: process.platform === 'win32' ? releaseNotes : releaseName,
-    detail: 'A new version has been downloaded. Restart the application to apply the updates.'
-  }
-
-  dialog.showMessageBox(dialogOpts, (response) => {
-    if (response === 0) autoUpdater.quitAndInstall()
-  })
-})
 
 let mainWindow
 const winURL = process.env.NODE_ENV === 'development'
@@ -57,4 +43,38 @@ app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
   }
+})
+
+const sendStatusToWindow = (text) => {
+  if (mainWindow) {
+    mainWindow.webContents.send('message', text)
+  }
+}
+
+autoUpdater.on('checking-for-update', () => {
+  sendStatusToWindow('Checking for update...')
+})
+autoUpdater.on('update-available', info => {
+  sendStatusToWindow('Update available.')
+})
+autoUpdater.on('update-not-available', info => {
+  sendStatusToWindow('Update not available.')
+})
+autoUpdater.on('error', err => {
+  sendStatusToWindow(`Error in auto-updater: ${err.toString()}`)
+})
+autoUpdater.on('download-progress', progressObj => {
+  sendStatusToWindow(
+    `Download speed: ${progressObj.bytesPerSecond} - Downloaded ${progressObj.percent}% (${progressObj.transferred} + '/' + ${progressObj.total} + )`
+  )
+})
+autoUpdater.on('update-downloaded', info => {
+  sendStatusToWindow('Update downloaded; will install now')
+})
+
+autoUpdater.on('update-downloaded', info => {
+  // Wait 5 seconds, then quit and install
+  // In your application, you don't need to wait 500 ms.
+  // You could call autoUpdater.quitAndInstall(); immediately
+  autoUpdater.quitAndInstall()
 })
