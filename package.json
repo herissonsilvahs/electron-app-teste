@@ -3,7 +3,7 @@
   "productName": "soccer",
   "version": "0.0.2",
   "author": "Herisson Silva <herissonsilvahs@gmail.com>",
-  "description": "An electron-vue project",
+  "description": "An electron-vue and auto update project",
   "license": null,
   "main": "./dist/electron/main.js",
   "scripts": {
