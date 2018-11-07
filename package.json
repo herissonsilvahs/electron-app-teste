@@ -1,7 +1,7 @@
 {
   "name": "soccer",
   "productName": "soccer",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Herisson Silva <herissonsilvahs@gmail.com>",
   "description": "An electron-vue project",
   "license": null,
