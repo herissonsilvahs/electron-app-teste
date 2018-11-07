@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, BrowserWindow, autoUpdater } from 'electron'
+import { app, BrowserWindow, autoUpdater, dialog } from 'electron'
 
 if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
@@ -21,7 +21,9 @@ autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
     detail: 'A new version has been downloaded. Restart the application to apply the updates.'
   }
 
-  console.log(dialogOpts)
+  dialog.showMessageBox(dialogOpts, (response) => {
+    if (response === 0) autoUpdater.quitAndInstall()
+  })
 })
 
 let mainWindow
